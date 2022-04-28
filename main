@@ -1,0 +1,95 @@
+import board, time, neopixel, digitalio
+from adafruit_debouncer import Debouncer
+
+button_input1 = digitalio.DigitalInOut(board.D2)
+button_input1.switch_to_input(pull=digitalio.Pull.UP)
+button1 = Debouncer(button_input1)
+
+button_input2 = digitalio.DigitalInOut(board.D3)
+button_input2.switch_to_input(pull=digitalio.Pull.UP)
+button2 = Debouncer(button_input2)
+
+button_input3 = digitalio.DigitalInOut(board.D4)
+button_input3.switch_to_input(pull=digitalio.Pull.UP)
+button3 = Debouncer(button_input3)
+
+
+cards =[2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10]
+A_11 = [11, 11, 11, 11]
+A_1 = [1, 1, 1, 1]
+
+
+def get_dealer():
+    dealer_val = 0
+    dealer = 1
+    while dealer:
+        button1.update()
+        button2.update()
+        global dealer_val
+        global dealer
+        if button1.fell:
+            dealer_val += 1
+            print(dealer_val)
+        if button2.fell:
+            dealer = 0
+    print("dealer val saved")
+    print("dealer val is: ", dealer_val)
+    return dealer_val
+
+def input_cards():
+    card = 1
+    my_val = 0
+    my_vals=[]
+    while card:
+        button1.update()
+        button2.update()
+        if button1.fell:
+            my_val += 1
+            print(my_val)
+        if button2.fell:
+            card = 0
+    my_vals.append(my_val)
+    print("card val saved")
+    print("card val is: ", my_val)
+    return my_vals
+
+#def card_count(my_vals):
+    #here is where u write your if statement to get true count
+    
+def EX_popper(dealer_val, my_vals):
+    global cards
+    cards.pop(dealer_val)
+    for card in my_vals:
+        if card == 11 or card == 1:
+            A_11.pop(11)
+            A_1.pop(1)
+        else:
+            cards.pop(card)
+        
+def get_EX():
+    global cards
+    total = 0
+    for card in cards:
+        total += card
+    ev = total / len(cards)
+    return ev
+    
+def get_EX_under_11():
+    global cards
+    global A_11
+    
+def get_EX_over_10():
+    
+
+#def main():
+    #get_dealer() #now we have dealer val saved as dealer_val
+    #while !button3.fell:
+        #input_cards() #now we have an array of all card values as my_vals
+    #card_count(my_vals) #get true count
+    #now do we compare true count with dealer? whats the vibe?
+
+get_dealer()
+input_cards()
+input_cards()
+input_cards()
+print(my_vals)
