@@ -13,20 +13,21 @@ button_input3 = digitalio.DigitalInOut(board.D4)
 button_input3.switch_to_input(pull=digitalio.Pull.UP)
 button3 = Debouncer(button_input3)
 
+button_input4 = digitalio.DigitalInOut(board.D5)
+button_input4.switch_to_input(pull=digitalio.Pull.UP)
+button4 = Debouncer(button_input4)
 
-cards =[2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10]
-A_11 = [11, 11, 11, 11]
-A_1 = [1, 1, 1, 1]
 
+cards =['A', 'A', 'A', 'A', 2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,8,8,8,8,9,9,9,9,10,10,10,10,10,10,10,10,10,10,10,10]
+dealer_val = 0
+my_vals = []
 
 def get_dealer():
-    dealer_val = 0
+    global dealer_val
     dealer = 1
     while dealer:
         button1.update()
         button2.update()
-        global dealer_val
-        global dealer
         if button1.fell:
             dealer_val += 1
             print(dealer_val)
@@ -39,7 +40,7 @@ def get_dealer():
 def input_cards():
     card = 1
     my_val = 0
-    my_vals=[]
+    global my_vals
     while card:
         button1.update()
         button2.update()
@@ -52,44 +53,78 @@ def input_cards():
     print("card val saved")
     print("card val is: ", my_val)
     return my_vals
-
-#def card_count(my_vals):
-    #here is where u write your if statement to get true count
     
-def EX_popper(dealer_val, my_vals):
+def EX_popper(dealer_val):
     global cards
-    cards.pop(dealer_val)
+    if dealer_val == 11 or dealer_val == 1:
+        cards.pop(cards.index('A'))
+    else:
+        cards.pop(cards.index(dealer_val))
+
+def EX_popper1(my_vals):
+    global cards
     for card in my_vals:
         if card == 11 or card == 1:
-            A_11.pop(11)
-            A_1.pop(1)
+            cards.pop(cards.index('A'))
         else:
-            cards.pop(card)
+            cards.pop(cards.index(card))
+
+def get_EX(my_vals):
+    global cards
+    count = 0
+    if sum(my_vals) > 10:
+        if cards.count('A') == 4:
+            count += 14
+        elif cards.count('A') == 3:
+            count += 13
+        elif cards.count('A') == 2:
+            count += 12
+        elif cards.count('A') == 1:
+            count += 11
+        for card in cards:
+            if card == 'A':
+                continue
+            else: 
+                count += card
+        return count / len(cards)
+    if sum(my_vals) == 10:
+        for card in cards:
+            if card == 'A':
+                count += 11
+            else: 
+                count += card
+        return count / len(cards)
+    if sum(my_vals) < 10:
+        for card in cards:
+            if card == 'A':
+                count += 1
+            else: 
+                count += card
+        return count / len(cards)
+
+def new_turn():
+    my_vals = []
+    return
+    
+def turn():
+    get_dealer()
+    EX_popper(dealer_val)
+    input_cards()
+    input_cards()
+    while True:
+        button3.update()
+        input_cards()
+        if button3.fell:
+            break
+    EX_popper1(my_vals)
+    print(get_EX(my_vals))
+    print(cards)
         
-def get_EX():
-    global cards
-    total = 0
-    for card in cards:
-        total += card
-    ev = total / len(cards)
-    return ev
-    
-def get_EX_under_11():
-    global cards
-    global A_11
-    
-def get_EX_over_10():
-    
 
-#def main():
-    #get_dealer() #now we have dealer val saved as dealer_val
-    #while !button3.fell:
-        #input_cards() #now we have an array of all card values as my_vals
-    #card_count(my_vals) #get true count
-    #now do we compare true count with dealer? whats the vibe?
-
-get_dealer()
-input_cards()
-input_cards()
-input_cards()
-print(my_vals)
+def main():
+    button4.update()
+    if button4.fell:
+        new_turn()
+        turn()
+        
+main()
