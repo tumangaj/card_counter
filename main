@@ -52,7 +52,7 @@ def input_cards():
     my_vals.append(my_val)
     print("card val saved")
     print("card val is: ", my_val)
-    return my_vals
+    return my_val
     
 def EX_popper(dealer_val):
     global cards
@@ -63,11 +63,12 @@ def EX_popper(dealer_val):
 
 def EX_popper1(my_vals):
     global cards
-    for card in my_vals:
-        if card == 11 or card == 1:
-            cards.pop(cards.index('A'))
-        else:
-            cards.pop(cards.index(card))
+    if my_vals == 11 or my_vals == 1:
+        cards.pop(cards.index('A'))
+    elif my_vals == 0:
+        return
+    else:
+        cards.pop(cards.index(my_vals))
 
 def get_EX(my_vals):
     global cards
@@ -103,28 +104,31 @@ def get_EX(my_vals):
         return count / len(cards)
 
 def new_turn():
+    global dealer_val
+    global my_vals
     my_vals = []
+    dealer_val=0
     return
     
 def turn():
     get_dealer()
     EX_popper(dealer_val)
-    input_cards()
-    input_cards()
+    button3.update()
     while True:
-        button3.update()
-        input_cards()
-        if button3.fell:
+        EX_popper1(input_cards())
+        print(get_EX(my_vals))
+        print(cards)
+        if input_cards() == 0:
             break
-    EX_popper1(my_vals)
-    print(get_EX(my_vals))
-    print(cards)
+    return
         
 
 def main():
-    button4.update()
-    if button4.fell:
-        new_turn()
+    button2.update()
+    while True:
         turn()
+        if button2.fell:
+            new_turn()
+            print("new turn!")
         
-main()
+main()# Write your code here :-)
